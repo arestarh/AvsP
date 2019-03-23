@@ -1,11 +1,7 @@
-import codecs
-import os.path
+import os, io
 
 # run in thread
-try:
-    bookmarks = avsp.GetBookmarkList(title=False)
-except TypeError:
-    bookmarks = avsp.GetBookmarkList()
+bookmarks = avsp.GetBookmarkList()
 bookmarks.sort()
 filename = avsp.GetSaveFilename(
                 title=_('Save chapter file as...'), 
@@ -16,10 +12,8 @@ filename = avsp.GetSaveFilename(
                                        _('All files') + ' (*.*)|*.*')))
 if not filename:
     return
-text = []
-for item in bookmarks:
-       s = '%s K -1\n'% item
-       text += [s]
-       f = codecs.open(filename, 'w', 'utf-8')
-       f.writelines(text)
-       f.close()
+
+with io.open(filename, mode='w', encoding='utf8') as f:
+    for item in bookmarks:
+        s = '%s K -1'% item
+        f.write(s.decode('utf8') + '\n')
